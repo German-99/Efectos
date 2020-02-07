@@ -18,6 +18,8 @@ using Microsoft.Win32;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
+using System.Windows.Threading;
+
 namespace Reproductor
 {
     /// <summary>
@@ -25,11 +27,16 @@ namespace Reproductor
     /// </summary>
     public partial class MainWindow : Window
     {
+        DispatcherTimer timer;
         //Lector de archivos
         AudioFileReader reader;
         //comunicacion con la tarjeta de audio
         //exclusivo para salida
         WaveOut output;
+        bool dragging = false;
+        //VolumeSampleProvider volume;
+        EfectoVolumen efectoVolumen;
+        EfectoFadeIn efectoFadeIn;
 
         public MainWindow()
         {
@@ -38,6 +45,31 @@ namespace Reproductor
             btnReproducir.IsEnabled = false;
             btnDetener.IsEnabled = false;
             btnPausa.IsEnabled = false;
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(500);
+            timer.Tick += Timer_Tick;
+        }
+
+   
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            if(efectoFadeIn != null)
+            {
+                /*lblMuestras.Text = 
+                    efectoFadeIn.segundosTranscurridos.ToString();*/
+            }
+            lblTiempoActual.Text =
+                reader.CurrentTime.ToString().
+                Substring(0, 8);
+
+            if (!dragging)
+            {
+                sldTiempo.Value =
+                    reader.CurrentTime.TotalSeconds;
+            }
+
+
         }
 
         void ListarDispositivosSalida()
@@ -80,23 +112,31 @@ namespace Reproductor
                 txtRutaArchivo.Text != string.Empty)
                 {
                     reader = new AudioFileReader(txtRutaArchivo.Text);
-                    volume = new VolumeSampleProvider(reader);
+                    /*volume = new VolumeSampleProvider(reader);
+                    volume.Volume = (float)(sldVolumen.Value);*/
+
+                    efectoFadeIn = new EfectoFadeIn(reader,5.0f);
 
                     efectoVolumen = new EfectoVolumen(reader);
-                    efectoVolumen = (float)(sldVolumen.value);
+                    efectoVolumen.Volumen = (float)(sldVolumen.Value);
 
                     output = new WaveOut();
                     output.DeviceNumber = cbDispositivoSalida.SelectedIndex;
                     output.PlaybackStopped += Output_PlaybackStopped;
-                    output.Init(reader);
+                    output.Init(efectoVolumen);
                     output.Play();
+                    //canbiar volumen output
+                    /*output.Volume = (float)(sldVolumen.Value);*/
 
                     btnReproducir.IsEnabled = false;
                     btnPausa.IsEnabled = true;
                     btnDetener.IsEnabled = true;
 
                     lblTiempoTotal.Text = reader.TotalTime.ToString().Substring(0,8);
-                    
+                    sldTiempo.Value = reader.CurrentTime.TotalSeconds;
+
+                    timer.Start();
+
                 }
             }
 
@@ -105,6 +145,7 @@ namespace Reproductor
 
         private void Output_PlaybackStopped(object sender, StoppedEventArgs e)
         {
+            timer.Stop();
             reader.Dispose();
             output.Dispose();
         }
@@ -128,6 +169,38 @@ namespace Reproductor
                 btnReproducir.IsEnabled = true;
                 btnPausa.IsEnabled = false;
                 btnDetener.IsEnabled = true;
+            }
+        }
+        private void sldTiempo_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        {
+            dragging = true;
+        }
+
+        private void sldTiempo_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            dragging = false;
+            if (reader != null &&
+                output != null &&
+                output.PlaybackState != PlaybackState.Stopped)
+            {
+                reader.CurrentTime =
+                    TimeSpan.FromSeconds(
+                        sldTiempo.Value);
+            }
+        }
+
+        private void sldVolumen_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (output != null &&
+                output.PlaybackState !=
+                PlaybackState.Stopped)
+            {
+                efectoVolumen.Volumen =
+                    (float)(sldVolumen.Value);
+                /*output.Volume =
+                    (float)(sldVolumen.Value);*/
+                /*volume.Volume =
+                    (float)(sldVolumen.Value);*/
             }
         }
     }

@@ -17,7 +17,7 @@ namespace Reproductor
         public EfectoVolumen(ISampleProvider fuente)
         {
             this.fuente = fuente;
-            volumen = 1.0f;
+            volumen = 0.2f;
         }
 
         public float Volumen
