@@ -41,7 +41,7 @@ namespace Reproductor
             if(segundosTranscurridos <= duracion)
             {
                 //aplicar el efecto
-                float factorEscala = segundosTranscurridos
+                float factorEscala = segundosTranscurridos / duracion;
                 for(int i=0; i < read; i++)
                 {
                     buffer[i + offset] *= factorEscala;

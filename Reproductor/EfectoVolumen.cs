@@ -33,6 +33,10 @@ namespace Reproductor
                     volumen = 0;
                 } else if (value > 1)
                 {
+                    volumen = 1;
+                }
+                else
+                {
                     volumen = value;
                 }
             }
@@ -51,7 +55,7 @@ namespace Reproductor
            int read = fuente.Read(buffer, offset, count);
 
             //Aplicar el efecto
-            for(int i=0; i<read; i++)
+            for(int i=0; i < read; i++)
             {
                 buffer[i + offset] *= volumen;
             }

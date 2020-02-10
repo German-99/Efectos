@@ -115,9 +115,9 @@ namespace Reproductor
                     /*volume = new VolumeSampleProvider(reader);
                     volume.Volume = (float)(sldVolumen.Value);*/
 
-                    efectoFadeIn = new EfectoFadeIn(reader,5.0f);
+                    efectoFadeIn = new EfectoFadeIn(reader,20.0f);
 
-                    efectoVolumen = new EfectoVolumen(reader);
+                    efectoVolumen = new EfectoVolumen(efectoFadeIn);
                     efectoVolumen.Volumen = (float)(sldVolumen.Value);
 
                     output = new WaveOut();
@@ -133,6 +133,9 @@ namespace Reproductor
                     btnDetener.IsEnabled = true;
 
                     lblTiempoTotal.Text = reader.TotalTime.ToString().Substring(0,8);
+                   lblTiempoActual.Text = reader.CurrentTime.ToString().Substring(0, 8);
+
+                    sldTiempo.Maximum = reader.TotalTime.TotalSeconds;
                     sldTiempo.Value = reader.CurrentTime.TotalSeconds;
 
                     timer.Start();
