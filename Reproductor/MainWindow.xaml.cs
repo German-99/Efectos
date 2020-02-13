@@ -69,6 +69,12 @@ namespace Reproductor
                     reader.CurrentTime.TotalSeconds;
             }
 
+            if(efectoFadeOut != null)
+            {
+                /*lblMuestras.Text = 
+                    efectoFadeOut.segundosTranscurridos.ToString();*/
+            }
+
 
         }
 
