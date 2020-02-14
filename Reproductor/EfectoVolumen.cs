@@ -11,13 +11,13 @@ namespace Reproductor
     class EfectoVolumen : ISampleProvider
     {
 
-        private ISampleProvider fuente;
+        private ISampleProvider fuente; // entrada
         private float volumen;
 
         public EfectoVolumen(ISampleProvider fuente)
         {
             this.fuente = fuente;
-            volumen = 0.2f;
+            volumen = 1.0f;
         }
 
         public float Volumen
@@ -55,11 +55,12 @@ namespace Reproductor
            int read = fuente.Read(buffer, offset, count);
 
             //Aplicar el efecto
+            //procesamiento
             for(int i=0; i < read; i++)
             {
                 buffer[i + offset] *= volumen;
             }
-
+            //La variable buffer modificada es la salida
             return read;
         }
     }

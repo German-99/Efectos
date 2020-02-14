@@ -38,7 +38,7 @@ namespace Reproductor
             segundosTranscurridos = (float)muestrasLeidas / (float)fuente.WaveFormat.SampleRate 
                 / (float)fuente.WaveFormat.Channels;
 
-            if(segundosTranscurridos >= duracion)
+            if(segundosTranscurridos <= duracion)
             {
                 //aplicar el efecto
                 float factorEscala = segundosTranscurridos / duracion;

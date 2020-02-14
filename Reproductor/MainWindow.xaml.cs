@@ -37,6 +37,7 @@ namespace Reproductor
         //VolumeSampleProvider volume;
         EfectoVolumen efectoVolumen;
         EfectoFadeIn efectoFadeIn;
+        EfectoFadeOut efectoFadeOut;
 
         public MainWindow()
         {
@@ -69,11 +70,6 @@ namespace Reproductor
                     reader.CurrentTime.TotalSeconds;
             }
 
-            if(efectoFadeOut != null)
-            {
-                /*lblMuestras.Text = 
-                    efectoFadeOut.segundosTranscurridos.ToString();*/
-            }
 
 
         }
